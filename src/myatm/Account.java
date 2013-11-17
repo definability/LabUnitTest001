@@ -12,5 +12,5 @@ public interface Account {
     //Снимает указанную сумму со счета
     //Возвращает сумму, которая была снята
     public double withdrow(double amount);
-    
+
 }
