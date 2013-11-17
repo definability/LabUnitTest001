@@ -193,14 +193,25 @@ public class ATMTest {
         atm.getCash(getNegativeDouble());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-     public void testGetSmallCash() throws Exception {
-        double balance = Double.MAX_VALUE*1E-20;
+    @Test//(expected = IllegalArgumentException.class)
+     public void testGetSmallCashBigATM() throws Exception {
         double money = Double.MAX_VALUE;
+        double balance = money*1E-30;
         Card card = generateMocCard(balance);
         ATM atm = new ATM(money);
         assertTrue(atm.validateCard(card, getInteger()));
-        atm.getCash(balance);
+        assertEquals(atm.getCash(balance), balance, DELTA);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetSmallCashBigAccount() throws Exception {
+        double money = Double.MAX_VALUE;
+        double balance = money*1E-30;
+        double cash = balance*1E-30;
+        Card card = generateMocCard(balance);
+        ATM atm = new ATM(money);
+        assertTrue(atm.validateCard(card, getInteger()));
+        assertEquals(atm.getCash(cash), cash, DELTA);
     }
 
     @Test(expected = NotEnoughMoneyInAccount.class)

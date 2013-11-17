@@ -4,6 +4,8 @@
  */
 package myatm;
 
+import java.math.BigDecimal;
+
 public class ATM {
 
     public static final double EPSILON = 1E-03;
@@ -14,7 +16,7 @@ public class ATM {
 
     private Card card;
     // DOUBLE??? So sad :-(
-    private double moneyInATM;
+    private BigDecimal moneyInATM;
 
     //Можно задавать количество денег в банкомате
     public ATM(double moneyInATM) {
@@ -32,12 +34,12 @@ public class ATM {
             // Let's be serious
             throw new IllegalArgumentException("You can't set negative money amount");
         } else {
-            this.moneyInATM = moneyInATM;
+            this.moneyInATM = new BigDecimal(moneyInATM);
         }
     }
 
     public double getMoneyInATM() {
-        return this.moneyInATM;
+        return this.moneyInATM.doubleValue();
     }
 
     //С вызова данного метода начинается работа с картой
@@ -94,19 +96,25 @@ public class ATM {
             throw new NotEnoughMoneyInAccount();
         } else if (getMoneyInATM() < amount) {
             throw new NotEnoughMoneyInATM();
-        } else if (!isSubtractionWithoutLoss(getMoneyInATM(), amount)
+        } else if (!isSubtractionWithoutLoss(moneyInATM, new BigDecimal(amount))
                 || !isSubtractionWithoutLoss(checkBalance(), amount)) {
             // The problem is: WE USE DOUBLE!
             throw new IllegalArgumentException("Withdrawal amount ("+amount+") is small.");
         } else {
             amount = this.card.getAccount().withdrow(amount);
-            this.moneyInATM -= amount;
+            moneyInATM = moneyInATM.subtract(new BigDecimal(amount));
+            //this.moneyInATM -= amount;
             return amount;
         }
     }
 
     private boolean isSubtractionWithoutLoss(double n, double m) {
         return isSubtractionWithoutLoss(n, m, EPSILON);
+    }
+
+
+    private boolean isSubtractionWithoutLoss(BigDecimal n, BigDecimal m) {
+        return isSubtractionWithoutLoss(n, m, new BigDecimal(EPSILON));
     }
 
 
@@ -117,6 +125,17 @@ public class ATM {
             // WARNING: DO NOT USE OPTIMIZATION HERE!
             double r = n - m;
             return Math.abs(r - n + m) < epsilon;
+        }
+    }
+
+
+    private boolean isSubtractionWithoutLoss(BigDecimal n, BigDecimal m, BigDecimal epsilon) {
+        if (n.doubleValue() < 0 || m.doubleValue() < 0 || n.compareTo(m) == -1) {
+            throw new IllegalArgumentException();
+        } else {
+            // WARNING: DO NOT USE OPTIMIZATION HERE!
+            BigDecimal r = n.subtract(m);
+            return r.subtract(n).add(m).abs().compareTo(epsilon) == -1;
         }
     }
 
