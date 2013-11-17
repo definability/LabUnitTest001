@@ -15,7 +15,6 @@ public class ATM {
     }
 
     private Card card;
-    // DOUBLE??? So sad :-(
     private BigDecimal moneyInATM;
 
     //Можно задавать количество денег в банкомате
