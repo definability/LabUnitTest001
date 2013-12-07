@@ -28,9 +28,6 @@ public class ATM {
 
     public void setMoneyInATM(double moneyInATM) {
         if (moneyInATM < 0.0) {
-            // :D
-            // moneyInATM = -moneyInATM;
-            // Let's be serious
             throw new IllegalArgumentException("You can't set negative money amount");
         } else {
             this.moneyInATM = new BigDecimal(moneyInATM);
@@ -51,7 +48,7 @@ public class ATM {
             return false;
         } else {
             this.card = card;
-            if (this.card.getAccount().getBalance()<0.0) {
+            if (this.card.getAccount().getBalance() < 0.0) {
                 throw new IllegalArgumentException("Card balance can not be negative");
             } else {
                 return true;
@@ -83,7 +80,7 @@ public class ATM {
      * @throws NotEnoughMoneyInATM
      */
     public double getCash(double amount) throws NoCardInserted, NotEnoughMoneyInAccount, NotEnoughMoneyInATM {
-        if (amount<=-EPSILON) {
+        if (amount <= -EPSILON) {
             throw new IllegalArgumentException("You cannot withdraw negative number");
         } else if (Math.abs(amount) < EPSILON) {
             if (card == null) {
@@ -98,7 +95,7 @@ public class ATM {
         } else if (!isSubtractionWithoutLoss(moneyInATM, new BigDecimal(amount))
                 || !isSubtractionWithoutLoss(checkBalance(), amount)) {
             // The problem is: WE USE DOUBLE!
-            throw new IllegalArgumentException("Withdrawal amount ("+amount+") is small.");
+            throw new IllegalArgumentException("Withdrawal amount (" + amount + ") is small.");
         } else {
             amount = this.card.getAccount().withdrow(amount);
             moneyInATM = moneyInATM.subtract(new BigDecimal(amount));
